@@ -4,8 +4,8 @@ import java.util.DoubleSummaryStatistics;
 
 public record StatisticsResponseDto(
         Long count,
-        double avg,
         double sum,
+        double avg,
         double min,
         double max
 ) {
