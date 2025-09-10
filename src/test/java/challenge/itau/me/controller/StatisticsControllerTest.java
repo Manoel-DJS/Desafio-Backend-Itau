@@ -50,6 +50,21 @@ class StatisticsControllerTest {
                 .andExpect(jsonPath("$.max").value(250.0));
     }
 
+    @Test
+    void GetCorrectStatisticsWithThreeTransactions() throws Exception {
+        transactionController.clearTransactions();
+        transactionController.createTransaction(new TransactionRequestDto(50.0, OffsetDateTime.now()));
+        transactionController.createTransaction(new TransactionRequestDto(150.0, OffsetDateTime.now()));
+        transactionController.createTransaction(new TransactionRequestDto(300.0, OffsetDateTime.now()));
 
+        mockMvc.perform(get("/estatistica")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.count").value(3))
+                .andExpect(jsonPath("$.sum").value(500.0))
+                .andExpect(jsonPath("$.avg").value(166.66666666666666))
+                .andExpect(jsonPath("$.min").value(50.0))
+                .andExpect(jsonPath("$.max").value(300.0));
+    }
 
 }
