@@ -67,4 +67,19 @@ class StatisticsControllerTest {
                 .andExpect(jsonPath("$.max").value(300.0));
     }
 
+    @Test
+    void GetCorrectStatisticsWithTransactionsExceedingOneMinute() throws Exception {
+        transactionController.clearTransactions();
+        transactionController.createTransaction(new TransactionRequestDto(250.0, OffsetDateTime.now()));
+        transactionController.createTransaction(new TransactionRequestDto(200.0, OffsetDateTime.now().minusSeconds(180)));
+
+        mockMvc.perform(get("/estatistica")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.count").value(1))
+                .andExpect(jsonPath("$.sum").value(250.0))
+                .andExpect(jsonPath("$.avg").value(250.0))
+                .andExpect(jsonPath("$.min").value(250.0))
+                .andExpect(jsonPath("$.max").value(250.0));
+    }
 }
